@@ -1,0 +1,13 @@
+﻿version: "3.8"
+
+services:
+  mariadb:
+    image: mariadb:10.10.3
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_USER: isabell
+      MYSQL_PASSWORD: 123456
+      MYSQL_DATABASE: characterswiki
+    ports:
+      - "1234:3306/tcp"
+    restart: always
