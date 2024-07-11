@@ -1,6 +1,7 @@
 package com.example.CharactersWiki_Backend.controller;
 
 import com.example.CharactersWiki_Backend.models.Origin;
+import com.example.CharactersWiki_Backend.models.ProjectionInterfaces.OriginResponse;
 import com.example.CharactersWiki_Backend.models.Responses.IdResponse;
 import com.example.CharactersWiki_Backend.models.dataTransferObjects.CreateOrigin;
 import com.example.CharactersWiki_Backend.models.errors.NotFoundException;
@@ -25,9 +26,9 @@ public class OriginsController
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Origin> getOrigin(@PathVariable int id) throws NotFoundException
+    public ResponseEntity<OriginResponse> getOrigin(@PathVariable int id) throws NotFoundException
     {
-        Origin origin = originsRepository.findById(id).orElseThrow(() -> new NotFoundException("Origin with id "+id+" not found."));
+        OriginResponse origin = originsRepository.getOriginById(id).orElseThrow(() -> new NotFoundException("Origin with id "+id+" not found."));
         return ResponseEntity.ok(origin);
     }
 
