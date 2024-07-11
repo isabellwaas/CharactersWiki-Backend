@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.List;
+
 @Data //Lombok: Generates Getters, Setters, toString, equals, and hashCode methods
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -49,8 +51,9 @@ public class Character
     @NotBlank(message="status must not be empty.")
     private String status;
 
-    /*@Column(name="origin", nullable=true)
-    private Origin origin;*/
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="origin_id")
+    private Origin origin;
 
     @NonNull
     @Column(name="hair", nullable=false)
@@ -76,29 +79,32 @@ public class Character
     @NotBlank(message="gender must not be empty.")
     private String gender;
 
-    /*@Column(name="allegiances", nullable=true)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name="characters_allegiances", joinColumns = @JoinColumn(name="character_id"), inverseJoinColumns = @JoinColumn(name="allegiance_id"))
     private List<Allegiance> allegiances;
 
-    @Column(name="family", nullable=true)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Character> family;
 
-    @Column(name="children", nullable=true)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Character> children;
 
-    @Column(name="loveInterests", nullable=true)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Character> loveInterests;
 
-    @Column(name="allies", nullable=true)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Character> allies;
 
-    @Column(name="enemies", nullable=true)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Character> enemies;
 
-    @Column(name="weapons", nullable=true)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name="characters_weapons", joinColumns = @JoinColumn(name="character_id"), inverseJoinColumns = @JoinColumn(name="weapon_id"))
     private List<Weapon> weapons;
 
-    @Column(name="quotes", nullable=true)
-    private List<Quote> quotes;*/
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name="characters_quotes", joinColumns = @JoinColumn(name="character_id"), inverseJoinColumns = @JoinColumn(name="quote_id"))
+    private List<Quote> quotes;
 
     @Column(name="biography", nullable=true)
     @Size(max=500, message="biography must not be longer than {max} characters.")

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -25,6 +27,6 @@ public class Weapon
     @NotBlank(message="name must not be empty.")
     private String name;
 
-    /*@Column(name="characters", nullable=true)
-    private List<Character> characters;*/
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy="weapons", cascade = CascadeType.ALL)
+    private List<Character> characters;
 }

@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -19,8 +21,9 @@ public class QuoteLine
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
-    /*@Column(name="character", nullable=true)
-    private Character character;*/
+    @ManyToOne
+    @JoinColumn(name="character_id")
+    private Character character;
 
     @NonNull
     @Column(name="text", nullable=false)
@@ -28,6 +31,6 @@ public class QuoteLine
     @NotBlank(message="text must not be empty.")
     private String text;
 
-    /*@Column(name="quote", nullable=true)
-    private Quote quote;*/
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Quote quote;
 }

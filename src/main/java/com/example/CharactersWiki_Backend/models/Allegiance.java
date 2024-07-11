@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
@@ -29,6 +31,6 @@ public class Allegiance
     @Size(max=100, message="note must not be longer than {max} characters.")
     private String note;
 
-    /*@Column(name="characters", nullable=true)
-    private List<Character> characters;*/
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy="allegiances", cascade = CascadeType.ALL)
+    private List<Character> characters;
 }

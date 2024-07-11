@@ -1,5 +1,6 @@
 package com.example.CharactersWiki_Backend.models;
 
+import java.util.List;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -25,13 +26,13 @@ public class Origin
     @NotBlank(message="name must not be empty.")
     private String name;
 
-    /*@Column(name="importantPlaces", nullable=true)
-    private List<Place> importantPlaces;*/
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="origin", cascade = CascadeType.ALL)
+    private List<Place> importantPlaces;
 
     @Column(name="description", nullable=true)
     @Size(max=500, message="description must not be longer than {max} characters.")
     private String description;
 
-    /*@Column(name="characters", nullable=true)
-    private List<Character> characters;*/
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="origin", cascade = CascadeType.ALL)
+    private List<Character> characters;
 }

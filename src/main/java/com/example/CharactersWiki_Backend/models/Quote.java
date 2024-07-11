@@ -8,9 +8,11 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
+import java.util.List;
+
 @Data
-@NoArgsConstructor
-@RequiredArgsConstructor
+//@NoArgsConstructor
+//@RequiredArgsConstructor
 @Entity
 @Table(name="quotes")
 public class Quote
@@ -19,9 +21,9 @@ public class Quote
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
-    /*@Column(name="quoteLines", nullable=true)
-    private List<QuoteLine> quoteLines;*/
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "quote", cascade = CascadeType.ALL)
+    private List<QuoteLine> quoteLines;
 
-    /*@Column(name="characters", nullable=true)
-    private List<Character> characters;*/
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy="quotes", cascade = CascadeType.ALL)
+    private List<Character> characters;
 }
