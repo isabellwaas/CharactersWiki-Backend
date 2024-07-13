@@ -1,4 +1,4 @@
-package com.example.CharactersWiki_Backend.models.ProjectionInterfaces;
+package com.example.CharactersWiki_Backend.models.projectionInterfaces;
 
 import java.util.List;
 
