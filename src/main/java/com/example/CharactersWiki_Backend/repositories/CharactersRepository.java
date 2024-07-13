@@ -1,7 +1,7 @@
 package com.example.CharactersWiki_Backend.repositories;
 
 import com.example.CharactersWiki_Backend.models.Character;
-import com.example.CharactersWiki_Backend.models.ProjectionInterfaces.CharacterResponse;
+import com.example.CharactersWiki_Backend.models.projectionInterfaces.CharacterResponse;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
