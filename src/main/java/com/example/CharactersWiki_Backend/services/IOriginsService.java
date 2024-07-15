@@ -3,7 +3,7 @@ package com.example.CharactersWiki_Backend.services;
 import com.example.CharactersWiki_Backend.models.dataTransferObjects.CreateOrigin;
 import com.example.CharactersWiki_Backend.models.errors.NotFoundException;
 import com.example.CharactersWiki_Backend.models.projectionInterfaces.OriginResponse;
-import com.example.CharactersWiki_Backend.models.responses.IdResponse;
+import com.example.CharactersWiki_Backend.models.dataTransferObjects.IdResponse;
 
 public interface IOriginsService
 {

@@ -1,7 +1,7 @@
 package com.example.CharactersWiki_Backend.controllers;
 
 import com.example.CharactersWiki_Backend.models.projectionInterfaces.OriginResponse;
-import com.example.CharactersWiki_Backend.models.responses.IdResponse;
+import com.example.CharactersWiki_Backend.models.dataTransferObjects.IdResponse;
 import com.example.CharactersWiki_Backend.models.dataTransferObjects.CreateOrigin;
 import com.example.CharactersWiki_Backend.models.errors.NotFoundException;
 import com.example.CharactersWiki_Backend.services.IOriginsService;
