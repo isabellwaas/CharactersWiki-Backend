@@ -7,12 +7,14 @@ import com.example.CharactersWiki_Backend.models.errors.NotFoundException;
 import com.example.CharactersWiki_Backend.models.projectionInterfaces.QuoteResponse;
 import com.example.CharactersWiki_Backend.models.projectionInterfaces.WeaponResponse;
 import com.example.CharactersWiki_Backend.services.ICharactersService;
-import com.example.CharactersWiki_Backend.utilities.IControllerHelper;
+import com.example.CharactersWiki_Backend.utilities.SortDirection;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("v1/characters")
@@ -25,6 +27,29 @@ public class CharactersController
     public CharactersController(ICharactersService charactersService)
     {
         this.charactersService = charactersService;
+    }
+    @GetMapping("")
+    public ResponseEntity<CharactersResponse> getCharacters(@RequestParam Optional<String> query, @RequestParam int pageNumber, @RequestParam int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    {
+        return ResponseEntity.ok(charactersService.getCharacters(query, pageNumber, perPage, sortDirection));
+    }
+
+    @GetMapping("/allegiances")
+    public ResponseEntity<AllegiancesResponse> getAllegiances(@RequestParam Optional<String> query, @RequestParam int pageNumber, @RequestParam int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    {
+        return ResponseEntity.ok(charactersService.getAllegiances(query, pageNumber, perPage, sortDirection));
+    }
+
+    @GetMapping("/weapons")
+    public ResponseEntity<WeaponsResponse> getWeapons(@RequestParam Optional<String> query, @RequestParam int pageNumber, @RequestParam int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    {
+        return ResponseEntity.ok(charactersService.getWeapons(query, pageNumber, perPage, sortDirection));
+    }
+
+    @GetMapping("/quotes")
+    public ResponseEntity<QuotesResponse> getQuotes(@RequestParam Optional<String> query, @RequestParam int pageNumber, @RequestParam int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    {
+        return ResponseEntity.ok(charactersService.getQuotes(query, pageNumber, perPage, sortDirection));
     }
 
     @GetMapping("/{id}")

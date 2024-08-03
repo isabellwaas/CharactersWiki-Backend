@@ -4,16 +4,18 @@ import com.example.CharactersWiki_Backend.models.*;
 import com.example.CharactersWiki_Backend.models.Character;
 import com.example.CharactersWiki_Backend.models.dataTransferObjects.*;
 import com.example.CharactersWiki_Backend.models.errors.NotFoundException;
-import com.example.CharactersWiki_Backend.models.projectionInterfaces.AllegianceResponse;
-import com.example.CharactersWiki_Backend.models.projectionInterfaces.CharacterResponse;
-import com.example.CharactersWiki_Backend.models.projectionInterfaces.QuoteResponse;
-import com.example.CharactersWiki_Backend.models.projectionInterfaces.WeaponResponse;
+import com.example.CharactersWiki_Backend.models.projectionInterfaces.*;
 import com.example.CharactersWiki_Backend.repositories.*;
-import com.example.CharactersWiki_Backend.utilities.IControllerHelper;
+import com.example.CharactersWiki_Backend.utilities.SortDirection;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CharactersService implements ICharactersService
@@ -25,37 +27,62 @@ public class CharactersService implements ICharactersService
     private final QuotesRepository quotesRepository;
 
     private final OriginsRepository originsRepository;
-    private final IControllerHelper controllerHelper;
 
-
-    public CharactersService(CharactersRepository charactersRepository, AllegiancesRepository allegiancesRepository, WeaponsRepository weaponsRepository, QuotesRepository quotesRepository, OriginsRepository originsRepository, IControllerHelper controllerHelper)
+    public CharactersService(CharactersRepository charactersRepository, AllegiancesRepository allegiancesRepository, WeaponsRepository weaponsRepository, QuotesRepository quotesRepository, OriginsRepository originsRepository)
     {
         this.charactersRepository = charactersRepository;
         this.allegiancesRepository = allegiancesRepository;
         this.weaponsRepository = weaponsRepository;
         this.quotesRepository = quotesRepository;
         this.originsRepository = originsRepository;
-        this.controllerHelper = controllerHelper;
+    }
+
+    public CharactersResponse getCharacters(Optional<String> query, int pageNumber, int perPage, Optional<SortDirection> sortDirection)
+    {
+        Sort sort = (sortDirection.isEmpty() || sortDirection.get() == SortDirection.ASC) ? Sort.by("id").ascending() : Sort.by("id").descending();
+        Page<CharacterSummary> page = charactersRepository.findCharactersByFirstnameContainingOrLastnameContainingOrNicknameContainingOrTitleContaining(query.orElse(""), query.orElse(""), query.orElse(""), query.orElse(""), PageRequest.of(pageNumber-1, perPage, sort));
+        return new CharactersResponse(page.getTotalPages(), page.getContent());
+    }
+
+    public AllegiancesResponse getAllegiances(Optional<String> query, int pageNumber, int perPage, Optional<SortDirection> sortDirection)
+    {
+        Sort sort = (sortDirection.isEmpty() || sortDirection.get() == SortDirection.ASC) ? Sort.by("id").ascending() : Sort.by("id").descending();
+        Page<AllegianceSummary> page = allegiancesRepository.findAllegiancesByNameContainingOrNoteContaining(query.orElse(""), query.orElse(""), PageRequest.of(pageNumber-1, perPage, sort));
+        return new AllegiancesResponse(page.getTotalPages(), page.getContent());
+    }
+
+    public WeaponsResponse getWeapons(Optional<String> query, int pageNumber, int perPage, Optional<SortDirection> sortDirection)
+    {
+        Sort sort = (sortDirection.isEmpty() || sortDirection.get() == SortDirection.ASC) ? Sort.by("id").ascending() : Sort.by("id").descending();
+        Page<WeaponSummary> page = weaponsRepository.findWeaponsByNameContaining(query.orElse(""), PageRequest.of(pageNumber-1, perPage, sort));
+        return new WeaponsResponse(page.getTotalPages(), page.getContent());
+    }
+
+    public QuotesResponse getQuotes(Optional<String> query, int pageNumber, int perPage, Optional<SortDirection> sortDirection)
+    {
+        Sort sort = (sortDirection.isEmpty() || sortDirection.get() == SortDirection.ASC) ? Sort.by("id").ascending() : Sort.by("id").descending();
+        Page<QuoteResponse> page = quotesRepository.findQuoteByQuoteLinesTextContaining(query.orElse(""), PageRequest.of(pageNumber-1, perPage, sort));
+        return new QuotesResponse(page.getTotalPages(), page.getContent());
     }
 
     public CharacterResponse getCharacterById(int id) throws NotFoundException
     {
-        return charactersRepository.getCharacterById(id).orElseThrow(() -> new NotFoundException("Character with id " + id + " not found."));
+        return charactersRepository.findCharacterById(id).orElseThrow(() -> new NotFoundException("Character with id " + id + " not found."));
     }
 
     public AllegianceResponse getAllegianceById(int id) throws NotFoundException
     {
-        return allegiancesRepository.getAllegianceById(id).orElseThrow(() -> new NotFoundException("Allegiance with id " + id + " not found."));
+        return allegiancesRepository.findAllegianceById(id).orElseThrow(() -> new NotFoundException("Allegiance with id " + id + " not found."));
     }
 
     public WeaponResponse getWeaponById(int id) throws NotFoundException
     {
-        return weaponsRepository.getWeaponById(id).orElseThrow(() -> new NotFoundException("Weapon with id " + id + " not found."));
+        return weaponsRepository.findWeaponById(id).orElseThrow(() -> new NotFoundException("Weapon with id " + id + " not found."));
     }
 
     public QuoteResponse getQuoteById(int id) throws NotFoundException
     {
-        return quotesRepository.getQuoteById(id).orElseThrow(() -> new NotFoundException("Quote with id " + id + " not found."));
+        return quotesRepository.findQuoteById(id).orElseThrow(() -> new NotFoundException("Quote with id " + id + " not found."));
     }
 
     public IdResponse createCharacter(CreateCharacter createCharacter) throws NotFoundException
