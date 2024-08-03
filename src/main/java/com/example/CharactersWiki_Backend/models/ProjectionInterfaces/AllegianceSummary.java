@@ -4,5 +4,5 @@ public interface AllegianceSummary
 {
     int getId();
     String getName();
-    String Note();
+    String getNote();
 }

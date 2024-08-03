@@ -10,5 +10,5 @@ import java.util.Optional;
 @Repository
 public interface OriginsRepository extends JpaRepository<Origin, Integer>
 {
-    Optional<OriginResponse> getOriginById(int id);
+    Optional<OriginResponse> findOriginById(int id);
 }

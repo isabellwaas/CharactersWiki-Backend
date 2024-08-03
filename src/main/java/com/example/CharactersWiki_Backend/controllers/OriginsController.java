@@ -30,7 +30,7 @@ public class OriginsController
         return ResponseEntity.ok(originsService.getOriginById(id));
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<IdResponse> createOrigin(@RequestBody @Valid CreateOrigin createOrigin) throws NotFoundException
     {
         return ResponseEntity.status(201).body(originsService.createOrigin(createOrigin));

@@ -20,7 +20,7 @@ public class OriginsService implements IOriginsService
 
     public OriginResponse getOriginById(int id) throws NotFoundException
     {
-        return originsRepository.getOriginById(id).orElseThrow(() -> new NotFoundException("Origin with id "+id+" not found."));
+        return originsRepository.findOriginById(id).orElseThrow(() -> new NotFoundException("Origin with id "+id+" not found."));
     }
 
     public IdResponse createOrigin(CreateOrigin createOrigin) throws NotFoundException

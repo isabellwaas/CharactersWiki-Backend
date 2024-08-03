@@ -22,7 +22,7 @@ public class CharactersController
     private final ICharactersService charactersService;
 
     @Autowired
-    public CharactersController(ICharactersService charactersService, IControllerHelper controllerHelper)
+    public CharactersController(ICharactersService charactersService)
     {
         this.charactersService = charactersService;
     }
@@ -51,25 +51,25 @@ public class CharactersController
         return ResponseEntity.ok(charactersService.getQuoteById(id));
     }
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<IdResponse> createCharacter(@RequestBody @Valid CreateCharacter createCharacter) throws NotFoundException
     {
         return ResponseEntity.status(201).body(charactersService.createCharacter(createCharacter));
     }
 
-    @PostMapping("/allegiances/")
+    @PostMapping("/allegiances")
     public ResponseEntity<IdResponse> createAllegiance(@RequestBody @Valid CreateAllegiance createAllegiance) throws NotFoundException
     {
         return ResponseEntity.status(201).body(charactersService.createAllegiance(createAllegiance));
     }
 
-    @PostMapping("/weapons/")
+    @PostMapping("/weapons")
     public ResponseEntity<IdResponse> createWeapon(@RequestBody @Valid CreateWeapon createWeapon) throws NotFoundException
     {
         return ResponseEntity.status(201).body(charactersService.createWeapon(createWeapon));
     }
 
-    @PostMapping("/quotes/")
+    @PostMapping("/quotes")
     public ResponseEntity<IdResponse> createQuote(@RequestBody @Valid CreateQuote createQuote) throws NotFoundException
     {
         return ResponseEntity.status(201).body(charactersService.createQuote(createQuote));
