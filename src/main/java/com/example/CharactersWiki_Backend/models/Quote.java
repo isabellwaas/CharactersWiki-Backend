@@ -20,6 +20,6 @@ public class Quote
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "quote", cascade = CascadeType.ALL)
     private List<QuoteLine> quoteLines;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy="quotes", cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy="quotes", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Character> characters;
 }

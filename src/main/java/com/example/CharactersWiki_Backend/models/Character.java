@@ -102,7 +102,7 @@ public class Character
     @JoinTable(name="characters_weapons", joinColumns = @JoinColumn(name="character_id"), inverseJoinColumns = @JoinColumn(name="weapon_id"))
     private List<Weapon> weapons;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name="characters_quotes", joinColumns = @JoinColumn(name="character_id"), inverseJoinColumns = @JoinColumn(name="quote_id"))
     private List<Quote> quotes;
 

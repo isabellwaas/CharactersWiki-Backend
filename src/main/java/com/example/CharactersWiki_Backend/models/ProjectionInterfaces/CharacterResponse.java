@@ -23,6 +23,6 @@ public interface CharacterResponse
     List<CharacterSummary> getAllies();
     List<CharacterSummary> getEnemies();
     List<WeaponSummary> getWeapons();
-    List<QuoteResponse> getQuotes();
+    List<QuoteSummary> getQuotes();
     String getBiography();
 }

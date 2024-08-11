@@ -99,4 +99,18 @@ public class CharactersController
     {
         return ResponseEntity.status(201).body(charactersService.createQuote(createQuote));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteCharacter(@PathVariable int id) throws NotFoundException
+    {
+        charactersService.deleteCharacter(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/quotes/{id}")
+    public ResponseEntity<Void> deleteQuote(@PathVariable int id) throws NotFoundException
+    {
+        charactersService.deleteQuote(id);
+        return ResponseEntity.noContent().build();
+    }
 }

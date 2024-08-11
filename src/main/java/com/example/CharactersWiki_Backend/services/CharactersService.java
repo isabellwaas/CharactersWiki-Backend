@@ -94,6 +94,7 @@ public class CharactersService implements ICharactersService
         if (createCharacter.nickname() != null) character.setNickname(createCharacter.nickname());
         if (createCharacter.biography() != null) character.setBiography(createCharacter.biography());
 
+        //TODO: Fehler wenn id nicht vorhanden, aber falsche fehlermeldung angezeigt (Timestamp...?)
         if (createCharacter.originId().isPresent())
             character.setOrigin(originsRepository.findById(createCharacter.originId().get()).orElseThrow(() -> new NotFoundException("Origin with id " + createCharacter.originId() + " not found.")));
 
@@ -146,20 +147,59 @@ public class CharactersService implements ICharactersService
         Quote quote = new Quote();
 
         List<QuoteLine> quoteLines = new ArrayList<>();
+        QuoteLine currentQuoteLine;
         for (CreateQuoteLine createQuoteLine : createQuote.quoteLines())
         {
-            QuoteLine quoteLine = new QuoteLine(createQuoteLine.text());
-            quoteLine.setCharacter(charactersRepository.findById(createQuoteLine.characterId()).orElseThrow(() -> new NotFoundException("Character with id " + createQuoteLine.characterId() + " not found.")));
-            quoteLines.add(quoteLine);
+            currentQuoteLine=new QuoteLine(createQuoteLine.characterName(), createQuoteLine.text());
+            currentQuoteLine.setQuote(quote);
+            quoteLines.add(currentQuoteLine);
         }
         quote.setQuoteLines(quoteLines);
 
-        if (createQuote.charactersIds().isPresent()) quote.setCharacters(charactersRepository.findCharactersByIdIn(createQuote.charactersIds().get()));
+        if (createQuote.charactersIds().isPresent())
+        {
+            List<Character> characters=charactersRepository.findCharactersByIdIn(createQuote.charactersIds().get());
+            quote.setCharacters(characters);
+            characters.forEach(character ->
+            {
+                List<Quote> quotes=character.getQuotes();
+                quotes.add(quote);
+                character.setQuotes(quotes);
+            });
+        }
 
         quotesRepository.save(quote);
         quotesRepository.flush();
-        // TODO Save quotelines and characters
 
         return new IdResponse(quote.getId());
+    }
+
+    public void deleteCharacter(int id) throws NotFoundException
+    {
+        Character character = charactersRepository.findById(id).orElseThrow(() -> new NotFoundException("Character with id " + id + " not found."));
+
+        List<Quote> quotes=character.getQuotes();
+        quotes.forEach(quote -> quote.getCharacters().remove(character));
+
+        charactersRepository.delete(character);
+
+        quotes.forEach(quote -> {
+            if(quote.getCharacters().isEmpty()) quotesRepository.delete(quote);
+        });
+    }
+
+    public void deleteQuote(int id) throws NotFoundException
+    {
+        Quote quote = quotesRepository.findById(id).orElseThrow(() -> new NotFoundException("Quote with id " + id + " not found."));
+
+        List<Character> characters=quote.getCharacters();
+        for (Character character : characters)
+        {
+            List<Quote> quotes=character.getQuotes();
+            quotes.remove(quote);
+            character.setQuotes(quotes);
+        }
+
+        quotesRepository.delete(quote);
     }
 }

@@ -19,9 +19,11 @@ public class QuoteLine
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
-    @JoinColumn(name="character_id")
-    private Character character;
+    @NonNull
+    @Column(name="characterName", nullable=false)
+    @Size(min=1, max=300, message="characterName must have between {min} and {max} characters.")
+    @NotBlank(message="characterName must not be empty.")
+    private String characterName;
 
     @NonNull
     @Column(name="text", nullable=false)
@@ -29,6 +31,7 @@ public class QuoteLine
     @NotBlank(message="text must not be empty.")
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name="quote_id")
     private Quote quote;
 }
