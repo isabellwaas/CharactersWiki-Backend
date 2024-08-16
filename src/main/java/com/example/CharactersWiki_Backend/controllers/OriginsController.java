@@ -62,4 +62,18 @@ public class OriginsController
     {
         return ResponseEntity.status(201).body(originsService.createPlace(createPlace));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteOrigin(@PathVariable int id) throws NotFoundException
+    {
+        originsService.deleteOrigin(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/places/{id}")
+    public ResponseEntity<Void> deletePlace(@PathVariable int id) throws NotFoundException
+    {
+        originsService.deletePlace(id);
+        return ResponseEntity.noContent().build();
+    }
 }

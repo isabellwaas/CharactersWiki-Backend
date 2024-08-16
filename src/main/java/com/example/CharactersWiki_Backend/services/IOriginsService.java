@@ -16,4 +16,6 @@ public interface IOriginsService
     public PlaceResponse getPlaceById(int id) throws NotFoundException;
     public IdResponse createOrigin(CreateOrigin createOrigin) throws NotFoundException;
     public IdResponse createPlace(CreatePlace createPlace) throws NotFoundException;
+    public void deleteOrigin(int id) throws NotFoundException;
+    public void deletePlace(int id) throws NotFoundException;
 }

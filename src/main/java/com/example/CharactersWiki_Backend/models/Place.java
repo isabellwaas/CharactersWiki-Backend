@@ -31,7 +31,7 @@ public class Place
     @NotBlank(message="type must not be empty.")
     private String type;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name="origin_id")
     private Origin origin;
 }

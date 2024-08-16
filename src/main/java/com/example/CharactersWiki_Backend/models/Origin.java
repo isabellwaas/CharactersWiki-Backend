@@ -33,6 +33,6 @@ public class Origin
     @Size(max=500, message="description must not be longer than {max} characters.")
     private String description;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="origin", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="origin", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Character> characters;
 }

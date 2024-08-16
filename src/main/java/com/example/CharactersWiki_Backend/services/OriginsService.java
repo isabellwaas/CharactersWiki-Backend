@@ -1,5 +1,6 @@
 package com.example.CharactersWiki_Backend.services;
 
+import com.example.CharactersWiki_Backend.models.Allegiance;
 import com.example.CharactersWiki_Backend.models.Origin;
 import com.example.CharactersWiki_Backend.models.Place;
 import com.example.CharactersWiki_Backend.models.Character;
@@ -97,5 +98,24 @@ public class OriginsService implements IOriginsService
         placesRepository.flush();
 
         return new IdResponse(place.getId());
+    }
+
+    public void deleteOrigin(int id) throws NotFoundException
+    {
+        Origin origin = originsRepository.findById(id).orElseThrow(() -> new NotFoundException("Origin with id " + id + " not found."));
+
+        origin.getCharacters().forEach(character -> character.setOrigin(null));
+        placesRepository.deleteAll(origin.getImportantPlaces());
+
+        originsRepository.delete(origin);
+    }
+    public void deletePlace(int id) throws NotFoundException
+    {
+        Place place = placesRepository.findById(id).orElseThrow(() -> new NotFoundException("Place with id " + id + " not found."));
+
+        Origin origin=place.getOrigin();
+        origin.getImportantPlaces().remove(place);
+
+        placesRepository.delete(place);
     }
 }
