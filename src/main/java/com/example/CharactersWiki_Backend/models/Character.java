@@ -79,7 +79,7 @@ public class Character
     @NotBlank(message="gender must not be empty.")
     private String gender;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name="characters_allegiances", joinColumns = @JoinColumn(name="character_id"), inverseJoinColumns = @JoinColumn(name="allegiance_id"))
     private List<Allegiance> allegiances;
 
@@ -98,7 +98,7 @@ public class Character
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<Character> enemies;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name="characters_weapons", joinColumns = @JoinColumn(name="character_id"), inverseJoinColumns = @JoinColumn(name="weapon_id"))
     private List<Weapon> weapons;
 

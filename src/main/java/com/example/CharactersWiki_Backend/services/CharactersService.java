@@ -9,7 +9,6 @@ import com.example.CharactersWiki_Backend.repositories.*;
 import com.example.CharactersWiki_Backend.utilities.SortDirection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -178,6 +177,12 @@ public class CharactersService implements ICharactersService
     {
         Character character = charactersRepository.findById(id).orElseThrow(() -> new NotFoundException("Character with id " + id + " not found."));
 
+        List<Allegiance> allegiances=character.getAllegiances();
+        allegiances.forEach(allegiance -> allegiance.getCharacters().remove(character));
+
+        List<Weapon> weapons=character.getWeapons();
+        weapons.forEach(weapon -> weapon.getCharacters().remove(character));
+
         List<Quote> quotes=character.getQuotes();
         quotes.forEach(quote -> quote.getCharacters().remove(character));
 
@@ -188,17 +193,46 @@ public class CharactersService implements ICharactersService
         });
     }
 
+    public void deleteAllegiance(int id) throws NotFoundException
+    {
+        Allegiance allegiance = allegiancesRepository.findById(id).orElseThrow(() -> new NotFoundException("Allegiance with id " + id + " not found."));
+
+        List<Character> characters=allegiance.getCharacters();
+        characters.forEach(character ->
+        {
+            List<Allegiance> allegiances=character.getAllegiances();
+            allegiances.remove(allegiance);
+            character.setAllegiances(allegiances);
+        });
+
+        allegiancesRepository.delete(allegiance);
+    }
+    public void deleteWeapon(int id) throws NotFoundException
+    {
+        Weapon weapon = weaponsRepository.findById(id).orElseThrow(() -> new NotFoundException("Weapon with id " + id + " not found."));
+
+        List<Character> characters=weapon.getCharacters();
+        characters.forEach(character ->
+        {
+            List<Weapon> weapons=character.getWeapons();
+            weapons.remove(weapon);
+            character.setWeapons(weapons);
+        });
+
+        weaponsRepository.delete(weapon);
+    }
+
     public void deleteQuote(int id) throws NotFoundException
     {
         Quote quote = quotesRepository.findById(id).orElseThrow(() -> new NotFoundException("Quote with id " + id + " not found."));
 
         List<Character> characters=quote.getCharacters();
-        for (Character character : characters)
+        characters.forEach(character ->
         {
             List<Quote> quotes=character.getQuotes();
             quotes.remove(quote);
             character.setQuotes(quotes);
-        }
+        });
 
         quotesRepository.delete(quote);
     }

@@ -107,6 +107,20 @@ public class CharactersController
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/allegiances/{id}")
+    public ResponseEntity<Void> deleteAllegiance(@PathVariable int id) throws NotFoundException
+    {
+        charactersService.deleteAllegiance(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/weapons/{id}")
+    public ResponseEntity<Void> deleteWeapon(@PathVariable int id) throws NotFoundException
+    {
+        charactersService.deleteWeapon(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/quotes/{id}")
     public ResponseEntity<Void> deleteQuote(@PathVariable int id) throws NotFoundException
     {

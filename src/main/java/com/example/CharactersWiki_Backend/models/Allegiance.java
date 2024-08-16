@@ -31,6 +31,6 @@ public class Allegiance
     @Size(max=100, message="note must not be longer than {max} characters.")
     private String note;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy="allegiances", cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy="allegiances", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Character> characters;
 }

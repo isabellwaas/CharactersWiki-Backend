@@ -27,6 +27,6 @@ public class Weapon
     @NotBlank(message="name must not be empty.")
     private String name;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy="weapons", cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy="weapons", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Character> characters;
 }
