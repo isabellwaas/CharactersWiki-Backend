@@ -86,33 +86,15 @@ public class CharactersService implements ICharactersService
 
     public IdResponse createCharacter(CreateCharacter createCharacter) throws NotFoundException
     {
-        Character character = new Character(createCharacter.firstname(), createCharacter.age(), createCharacter.species(), createCharacter.status(), createCharacter.hair(), createCharacter.eyes(), createCharacter.skin(), createCharacter.gender());
+        Character character = new Character(createCharacter.getFirstname(), createCharacter.getAge(), createCharacter.getSpecies(), createCharacter.getStatus(), createCharacter.getHair(), createCharacter.getEyes(), createCharacter.getSkin(), createCharacter.getGender());
 
-        if (createCharacter.title() != null) character.setTitle(createCharacter.title());
-        if (createCharacter.lastname() != null) character.setLastname(createCharacter.lastname());
-        if (createCharacter.nickname() != null) character.setNickname(createCharacter.nickname());
-        if (createCharacter.biography() != null) character.setBiography(createCharacter.biography());
+        if (createCharacter.getTitle() != null) character.setTitle(createCharacter.getTitle());
+        if (createCharacter.getLastname() != null) character.setLastname(createCharacter.getLastname());
+        if (createCharacter.getNickname() != null) character.setNickname(createCharacter.getNickname());
+        if (createCharacter.getBiography() != null) character.setBiography(createCharacter.getBiography());
 
         //TODO: Fehler wenn id nicht vorhanden, aber falsche fehlermeldung angezeigt (Timestamp...?)
-        if (createCharacter.originId().isPresent())
-            character.setOrigin(originsRepository.findById(createCharacter.originId().get()).orElseThrow(() -> new NotFoundException("Origin with id " + createCharacter.originId() + " not found.")));
-
-        if (createCharacter.allegiancesIds().isPresent())
-            character.setAllegiances(allegiancesRepository.findAllegiancesByIdIn(createCharacter.allegiancesIds().get()));
-        if (createCharacter.familyIds().isPresent())
-            character.setFamily(charactersRepository.findCharactersByIdIn(createCharacter.familyIds().get()));
-        if (createCharacter.childrenIds().isPresent())
-            character.setChildren(charactersRepository.findCharactersByIdIn(createCharacter.childrenIds().get()));
-        if (createCharacter.loveInterestsIds().isPresent())
-            character.setLoveInterests(charactersRepository.findCharactersByIdIn(createCharacter.loveInterestsIds().get()));
-        if (createCharacter.alliesIds().isPresent())
-            character.setAllies(charactersRepository.findCharactersByIdIn(createCharacter.alliesIds().get()));
-        if (createCharacter.enemiesIds().isPresent())
-            character.setEnemies(charactersRepository.findCharactersByIdIn(createCharacter.enemiesIds().get()));
-        if (createCharacter.weaponsIds().isPresent())
-            character.setWeapons(weaponsRepository.findWeaponsByIdIn(createCharacter.weaponsIds().get()));
-        if (createCharacter.quotesIds().isPresent())
-            character.setQuotes(quotesRepository.findQuotesByIdIn(createCharacter.quotesIds().get()));
+        updateCharacterRelationships(character, createCharacter);
 
         charactersRepository.save(character);
         charactersRepository.flush();
@@ -171,6 +153,44 @@ public class CharactersService implements ICharactersService
         quotesRepository.flush();
 
         return new IdResponse(quote.getId());
+    }
+
+    public void updateCharacter(int id, UpdateCharacter updateCharacter) throws NotFoundException
+    {
+        Character character = charactersRepository.findById(id).orElseThrow(() -> new NotFoundException("Character with id " + id + " not found."));
+
+        if (updateCharacter.getTitle() != null) character.setTitle(updateCharacter.getTitle());
+        if (updateCharacter.getFirstname() != null) character.setFirstname(updateCharacter.getFirstname());
+        if (updateCharacter.getLastname() != null) character.setLastname(updateCharacter.getLastname());
+        if (updateCharacter.getNickname() != null) character.setNickname(updateCharacter.getNickname());
+        if (updateCharacter.getAge() != null) character.setAge(updateCharacter.getAge());
+        if (updateCharacter.getSpecies() != null) character.setSpecies(updateCharacter.getSpecies());
+        if (updateCharacter.getStatus() != null) character.setStatus(updateCharacter.getStatus());
+        if (updateCharacter.getHair() != null) character.setHair(updateCharacter.getHair());
+        if (updateCharacter.getEyes() != null) character.setEyes(updateCharacter.getEyes());
+        if (updateCharacter.getSkin() != null) character.setSkin(updateCharacter.getSkin());
+        if (updateCharacter.getGender() != null) character.setGender(updateCharacter.getGender());
+        if (updateCharacter.getBiography() != null) character.setBiography(updateCharacter.getBiography());
+
+        updateCharacterRelationships(character, updateCharacter);
+
+        charactersRepository.save(character);
+        charactersRepository.flush();
+    }
+
+    private void updateCharacterRelationships(Character character, CharacterRelationships characterRelationships) throws NotFoundException
+    {
+        if (characterRelationships.originId != null)
+            character.setOrigin(originsRepository.findById(characterRelationships.originId).orElseThrow(() -> new NotFoundException("Origin with id " + characterRelationships.originId + " not found.")));
+
+        if(characterRelationships.allegiancesIds != null) character.setAllegiances(allegiancesRepository.findAllegiancesByIdIn(characterRelationships.allegiancesIds));
+        if(characterRelationships.familyIds != null) character.setFamily(charactersRepository.findCharactersByIdIn(characterRelationships.familyIds));
+        if(characterRelationships.childrenIds != null) character.setChildren(charactersRepository.findCharactersByIdIn(characterRelationships.childrenIds));
+        if(characterRelationships.loveInterestsIds != null) character.setLoveInterests(charactersRepository.findCharactersByIdIn(characterRelationships.loveInterestsIds));
+        if(characterRelationships.alliesIds != null) character.setAllies(charactersRepository.findCharactersByIdIn(characterRelationships.alliesIds));
+        if(characterRelationships.enemiesIds != null) character.setEnemies(charactersRepository.findCharactersByIdIn(characterRelationships.enemiesIds));
+        if(characterRelationships.weaponsIds != null) character.setWeapons(weaponsRepository.findWeaponsByIdIn(characterRelationships.weaponsIds));
+        if(characterRelationships.quotesIds != null) character.setQuotes(quotesRepository.findQuotesByIdIn(characterRelationships.quotesIds));
     }
 
     public void deleteCharacter(int id) throws NotFoundException

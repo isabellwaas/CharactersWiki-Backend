@@ -100,6 +100,13 @@ public class CharactersController
         return ResponseEntity.status(201).body(charactersService.createQuote(createQuote));
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updateCharacter(@PathVariable int id, @RequestBody @Valid UpdateCharacter updateCharacter) throws NotFoundException
+    {
+        charactersService.updateCharacter(id, updateCharacter);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCharacter(@PathVariable int id) throws NotFoundException
     {
