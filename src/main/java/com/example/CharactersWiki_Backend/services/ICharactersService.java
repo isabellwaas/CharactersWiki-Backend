@@ -26,6 +26,9 @@ public interface ICharactersService
     public IdResponse createWeapon(CreateWeapon createWeapon) throws NotFoundException;
     public IdResponse createQuote(CreateQuote createQuote) throws NotFoundException;
     public void updateCharacter(int id, UpdateCharacter updateCharacter) throws NotFoundException;
+    public void updateAllegiance(int id, UpdateAllegiance updateAllegiance) throws NotFoundException;
+    public void updateWeapon(int id, UpdateWeapon updateWeapon) throws NotFoundException;
+    public IdResponse updateQuote(int id, UpdateQuote updateQuote) throws NotFoundException;
     public void deleteCharacter(int id) throws NotFoundException;
     public void deleteAllegiance(int id) throws NotFoundException;
     public void deleteWeapon(int id) throws NotFoundException;

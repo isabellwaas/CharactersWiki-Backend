@@ -126,20 +126,11 @@ public class CharactersService implements ICharactersService
     public IdResponse createQuote(CreateQuote createQuote) throws NotFoundException
     {
         Quote quote = new Quote();
+        setQuoteLinesForQuote(createQuote.quoteLines(), quote);
 
-        List<QuoteLine> quoteLines = new ArrayList<>();
-        QuoteLine currentQuoteLine;
-        for (CreateQuoteLine createQuoteLine : createQuote.quoteLines())
+        if (createQuote.charactersIds() != null)
         {
-            currentQuoteLine=new QuoteLine(createQuoteLine.characterName(), createQuoteLine.text());
-            currentQuoteLine.setQuote(quote);
-            quoteLines.add(currentQuoteLine);
-        }
-        quote.setQuoteLines(quoteLines);
-
-        if (createQuote.charactersIds().isPresent())
-        {
-            List<Character> characters=charactersRepository.findCharactersByIdIn(createQuote.charactersIds().get());
+            List<Character> characters=charactersRepository.findCharactersByIdIn(createQuote.charactersIds());
             quote.setCharacters(characters);
             characters.forEach(character ->
             {
@@ -191,6 +182,75 @@ public class CharactersService implements ICharactersService
         if(characterRelationships.enemiesIds != null) character.setEnemies(charactersRepository.findCharactersByIdIn(characterRelationships.enemiesIds));
         if(characterRelationships.weaponsIds != null) character.setWeapons(weaponsRepository.findWeaponsByIdIn(characterRelationships.weaponsIds));
         if(characterRelationships.quotesIds != null) character.setQuotes(quotesRepository.findQuotesByIdIn(characterRelationships.quotesIds));
+    }
+
+    public void updateAllegiance(int id, UpdateAllegiance updateAllegiance) throws NotFoundException
+    {
+        Allegiance allegiance = allegiancesRepository.findById(id).orElseThrow(() -> new NotFoundException("Allegiance with id " + id + " not found."));
+
+        if (updateAllegiance.name() != null) allegiance.setName(updateAllegiance.name());
+        if (updateAllegiance.note() != null) allegiance.setNote(updateAllegiance.note());
+
+        allegiancesRepository.save(allegiance);
+        allegiancesRepository.flush();
+    }
+    public void updateWeapon(int id, UpdateWeapon updateWeapon) throws NotFoundException
+    {
+        Weapon weapon = weaponsRepository.findById(id).orElseThrow(() -> new NotFoundException("Weapon with id " + id + " not found."));
+
+        if (updateWeapon.name() != null) weapon.setName(updateWeapon.name());
+
+        weaponsRepository.save(weapon);
+        weaponsRepository.flush();
+    }
+
+    public IdResponse updateQuote(int id, UpdateQuote updateQuote) throws NotFoundException
+    {
+        Quote currentQuote = quotesRepository.findById(id).orElseThrow(() -> new NotFoundException("Quote with id " + id + " not found."));
+        Quote newQuote = new Quote();
+
+        if(updateQuote.quoteLines() != null)
+        {
+            setQuoteLinesForQuote(updateQuote.quoteLines(), newQuote);
+        }
+        else
+        {
+            List<QuoteLine> quoteLines = currentQuote.getQuoteLines();
+            quoteLines.forEach(quoteLine -> quoteLine.setQuote(newQuote));
+            newQuote.setQuoteLines(quoteLines);
+        }
+
+        List<Character> characters=new ArrayList<>();
+        if (updateQuote.charactersIds() != null) characters=charactersRepository.findCharactersByIdIn(updateQuote.charactersIds());
+        else characters=currentQuote.getCharacters();
+
+        deleteQuoteFromCharacters(currentQuote, currentQuote.getCharacters());
+        newQuote.setCharacters(characters);
+        characters.forEach(character ->
+        {
+            List<Quote> quotes=character.getQuotes();
+            quotes.add(newQuote);
+            character.setQuotes(quotes);
+        });
+
+        quotesRepository.delete(currentQuote);
+        quotesRepository.save(newQuote);
+        quotesRepository.flush();
+
+        return new IdResponse(newQuote.getId());
+    }
+
+    private void setQuoteLinesForQuote(List<CreateQuoteLine> createQuoteLines, Quote quote)
+    {
+        List<QuoteLine> quoteLines = new ArrayList<>();
+        QuoteLine currentQuoteLine;
+        for (CreateQuoteLine createQuoteLine : createQuoteLines)
+        {
+            currentQuoteLine=new QuoteLine(createQuoteLine.characterName(), createQuoteLine.text());
+            currentQuoteLine.setQuote(quote);
+            quoteLines.add(currentQuoteLine);
+        }
+        quote.setQuoteLines(quoteLines);
     }
 
     public void deleteCharacter(int id) throws NotFoundException
@@ -245,15 +305,17 @@ public class CharactersService implements ICharactersService
     public void deleteQuote(int id) throws NotFoundException
     {
         Quote quote = quotesRepository.findById(id).orElseThrow(() -> new NotFoundException("Quote with id " + id + " not found."));
+        deleteQuoteFromCharacters(quote, quote.getCharacters());
+        quotesRepository.delete(quote);
+    }
 
-        List<Character> characters=quote.getCharacters();
+    private void deleteQuoteFromCharacters(Quote quote, List<Character> characters)
+    {
         characters.forEach(character ->
         {
             List<Quote> quotes=character.getQuotes();
             quotes.remove(quote);
             character.setQuotes(quotes);
         });
-
-        quotesRepository.delete(quote);
     }
 }

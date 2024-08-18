@@ -107,6 +107,26 @@ public class CharactersController
         return ResponseEntity.noContent().build();
     }
 
+    @PatchMapping("/allegiances/{id}")
+    public ResponseEntity<Void> updateAllegiance(@PathVariable int id, @RequestBody @Valid UpdateAllegiance updateAllegiance) throws NotFoundException
+    {
+        charactersService.updateAllegiance(id, updateAllegiance);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/weapons/{id}")
+    public ResponseEntity<Void> updateWeapon(@PathVariable int id, @RequestBody @Valid UpdateWeapon updateWeapon) throws NotFoundException
+    {
+        charactersService.updateWeapon(id, updateWeapon);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/quotes/{id}")
+    public ResponseEntity<IdResponse> updateQuote(@PathVariable int id, @RequestBody @Valid UpdateQuote updateQuote) throws NotFoundException
+    {
+        return ResponseEntity.status(201).body(charactersService.updateQuote(id, updateQuote));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCharacter(@PathVariable int id) throws NotFoundException
     {
