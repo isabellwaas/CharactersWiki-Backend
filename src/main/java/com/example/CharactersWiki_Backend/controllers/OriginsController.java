@@ -63,6 +63,20 @@ public class OriginsController
         return ResponseEntity.status(201).body(originsService.createPlace(createPlace));
     }
 
+    @PatchMapping("/{id}")
+    public ResponseEntity<Void> updateOrigin(@PathVariable int id, @RequestBody @Valid UpdateOrigin updateOrigin) throws NotFoundException
+    {
+        originsService.updateOrigin(id, updateOrigin);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/places/{id}")
+    public ResponseEntity<Void> updatePlace(@PathVariable int id, @RequestBody @Valid UpdatePlace updatePlace) throws NotFoundException
+    {
+        originsService.updatePlace(id, updatePlace);
+        return ResponseEntity.noContent().build();
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrigin(@PathVariable int id) throws NotFoundException
     {

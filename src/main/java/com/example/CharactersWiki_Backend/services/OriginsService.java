@@ -67,16 +67,16 @@ public class OriginsService implements IOriginsService
         if (createOrigin.description() != null) origin.setDescription(createOrigin.description());
 
         //TODO: currently no error if id not exists
-        if (createOrigin.importantPlacesIds().isPresent())
+        if (createOrigin.importantPlacesIds() != null)
         {
-            List<Place> places=placesRepository.findPlacesByIdIn(createOrigin.importantPlacesIds().get());
+            List<Place> places=placesRepository.findPlacesByIdIn(createOrigin.importantPlacesIds());
             origin.setImportantPlaces(places);
             places.forEach(place -> place.setOrigin(origin));
         }
 
-        if (createOrigin.charactersIds().isPresent())
+        if (createOrigin.charactersIds() != null)
         {
-            List<Character> characters=charactersRepository.findCharactersByIdIn(createOrigin.charactersIds().get());
+            List<Character> characters=charactersRepository.findCharactersByIdIn(createOrigin.charactersIds());
             origin.setCharacters(characters);
             characters.forEach(character -> character.setOrigin(origin));
         }
@@ -91,13 +91,58 @@ public class OriginsService implements IOriginsService
     {
         Place place = new Place(createPlace.name(), createPlace.type());
 
-        if (createPlace.originId().isPresent())
-            place.setOrigin(originsRepository.findById(createPlace.originId().get()).orElseThrow(() -> new NotFoundException("Origin with id " + createPlace.originId() + " not found.")));
+        if (createPlace.originId() != null)
+            place.setOrigin(originsRepository.findById(createPlace.originId()).orElseThrow(() -> new NotFoundException("Origin with id " + createPlace.originId() + " not found.")));
 
         placesRepository.save(place);
         placesRepository.flush();
 
         return new IdResponse(place.getId());
+    }
+
+    public void updateOrigin(int id, UpdateOrigin updateOrigin) throws NotFoundException
+    {
+        Origin origin = originsRepository.findById(id).orElseThrow(() -> new NotFoundException("Origin with id " + id + " not found."));
+
+        if (updateOrigin.name() != null) origin.setName(updateOrigin.name());
+        if (updateOrigin.description() != null) origin.setDescription(updateOrigin.description());
+
+        if (updateOrigin.importantPlacesIds() != null)
+        {
+            List<Place> placesToDelete=origin.getImportantPlaces().stream().filter(place -> !(updateOrigin.importantPlacesIds().contains(place.getId()))).toList();
+
+            placesToDelete.forEach(placeToDelete ->
+            {
+                origin.getImportantPlaces().remove(placeToDelete);
+                placesRepository.delete(placeToDelete);
+            });
+
+            List<Place> places=placesRepository.findPlacesByIdIn(updateOrigin.importantPlacesIds());
+            origin.setImportantPlaces(places);
+            places.forEach(place -> place.setOrigin(origin));
+        }
+
+        if (updateOrigin.charactersIds() != null)
+        {
+            origin.getCharacters().forEach(character -> character.setOrigin(null));
+            List<Character> characters=charactersRepository.findCharactersByIdIn(updateOrigin.charactersIds());
+            origin.setCharacters(characters);
+            characters.forEach(character -> character.setOrigin(origin));
+        }
+
+        originsRepository.save(origin);
+        originsRepository.flush();
+    }
+    public void updatePlace(int id, UpdatePlace updatePlace) throws NotFoundException
+    {
+        Place place = placesRepository.findById(id).orElseThrow(() -> new NotFoundException("Place with id " + id + " not found."));
+
+        if (updatePlace.name() != null) place.setName(updatePlace.name());
+        if (updatePlace.type() != null) place.setType(updatePlace.type());
+        if (updatePlace.originId() != null) place.setOrigin(originsRepository.findById(updatePlace.originId()).orElseThrow(() -> new NotFoundException("Origin with id " + updatePlace.originId() + " not found.")));
+
+        placesRepository.save(place);
+        placesRepository.flush();
     }
 
     public void deleteOrigin(int id) throws NotFoundException
