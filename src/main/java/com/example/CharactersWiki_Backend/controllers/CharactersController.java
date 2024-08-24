@@ -9,6 +9,9 @@ import com.example.CharactersWiki_Backend.models.projectionInterfaces.WeaponResp
 import com.example.CharactersWiki_Backend.services.ICharactersService;
 import com.example.CharactersWiki_Backend.utilities.SortDirection;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -29,25 +32,26 @@ public class CharactersController
         this.charactersService = charactersService;
     }
     @GetMapping("")
-    public ResponseEntity<CharactersResponse> getCharacters(@RequestParam Optional<String> query, @RequestParam int pageNumber, @RequestParam int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    //TODO: required false statt Optional
+    public ResponseEntity<CharactersResponse> getCharacters(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
         return ResponseEntity.ok(charactersService.getCharacters(query, pageNumber, perPage, sortDirection));
     }
 
     @GetMapping("/allegiances")
-    public ResponseEntity<AllegiancesResponse> getAllegiances(@RequestParam Optional<String> query, @RequestParam int pageNumber, @RequestParam int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<AllegiancesResponse> getAllegiances(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
         return ResponseEntity.ok(charactersService.getAllegiances(query, pageNumber, perPage, sortDirection));
     }
 
     @GetMapping("/weapons")
-    public ResponseEntity<WeaponsResponse> getWeapons(@RequestParam Optional<String> query, @RequestParam int pageNumber, @RequestParam int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<WeaponsResponse> getWeapons(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
         return ResponseEntity.ok(charactersService.getWeapons(query, pageNumber, perPage, sortDirection));
     }
 
     @GetMapping("/quotes")
-    public ResponseEntity<QuotesResponse> getQuotes(@RequestParam Optional<String> query, @RequestParam int pageNumber, @RequestParam int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<QuotesResponse> getQuotes(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
         return ResponseEntity.ok(charactersService.getQuotes(query, pageNumber, perPage, sortDirection));
     }

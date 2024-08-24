@@ -7,6 +7,8 @@ import com.example.CharactersWiki_Backend.models.projectionInterfaces.PlaceRespo
 import com.example.CharactersWiki_Backend.services.IOriginsService;
 import com.example.CharactersWiki_Backend.utilities.SortDirection;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -28,13 +30,13 @@ public class OriginsController
     }
 
     @GetMapping("")
-    public ResponseEntity<OriginsResponse> getOrigins(@RequestParam Optional<String> query, @RequestParam int pageNumber, @RequestParam int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<OriginsResponse> getOrigins(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
         return ResponseEntity.ok(originsService.getOrigins(query, pageNumber, perPage, sortDirection));
     }
 
     @GetMapping("/places")
-    public ResponseEntity<PlacesResponse> getPlaces(@RequestParam Optional<String> query, @RequestParam int pageNumber, @RequestParam int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<PlacesResponse> getPlaces(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
         return ResponseEntity.ok(originsService.getPlaces(query, pageNumber, perPage, sortDirection));
     }
