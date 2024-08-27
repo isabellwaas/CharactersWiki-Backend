@@ -34,27 +34,79 @@ public class CharactersController
     }
     @GetMapping("")
     //TODO: required false statt Optional
-    public ResponseEntity<CharactersResponse> getCharacters(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<EntityModel<CharactersResponse>> getCharacters(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
-        return ResponseEntity.ok(charactersService.getCharacters(query, pageNumber, perPage, sortDirection));
+        CharactersResponse charactersResponse=charactersService.getCharacters(query, pageNumber, perPage, sortDirection);
+        EntityModel<CharactersResponse> entityModel=EntityModel.of(charactersResponse);
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getCharacters(query, pageNumber, perPage, sortDirection)).withSelfRel().withType("GET"));
+        if(pageNumber>1 && charactersResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getCharacters(query, 1, perPage, sortDirection)).withRel("first").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getCharacters(query, pageNumber-1, perPage, sortDirection)).withRel("prev").withType("GET"));
+        }
+        if(pageNumber<charactersResponse.maximumPage() && charactersResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getCharacters(query, pageNumber+1, perPage, sortDirection)).withRel("next").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getCharacters(query, charactersResponse.maximumPage(), perPage, sortDirection)).withRel("last").withType("GET"));
+        }
+        return ResponseEntity.ok(entityModel);
     }
 
     @GetMapping("/allegiances")
-    public ResponseEntity<AllegiancesResponse> getAllegiances(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<EntityModel<AllegiancesResponse>> getAllegiances(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
-        return ResponseEntity.ok(charactersService.getAllegiances(query, pageNumber, perPage, sortDirection));
+        AllegiancesResponse allegiancesResponse=charactersService.getAllegiances(query, pageNumber, perPage, sortDirection);
+        EntityModel<AllegiancesResponse> entityModel=EntityModel.of(allegiancesResponse);
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getAllegiances(query, pageNumber, perPage, sortDirection)).withSelfRel().withType("GET"));
+        if(pageNumber>1 && allegiancesResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getAllegiances(query, 1, perPage, sortDirection)).withRel("first").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getAllegiances(query, pageNumber-1, perPage, sortDirection)).withRel("prev").withType("GET"));
+        }
+        if(pageNumber<allegiancesResponse.maximumPage() && allegiancesResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getAllegiances(query, pageNumber+1, perPage, sortDirection)).withRel("next").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getAllegiances(query, allegiancesResponse.maximumPage(), perPage, sortDirection)).withRel("last").withType("GET"));
+        }
+        return ResponseEntity.ok(entityModel);
     }
 
     @GetMapping("/weapons")
-    public ResponseEntity<WeaponsResponse> getWeapons(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<EntityModel<WeaponsResponse>> getWeapons(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
-        return ResponseEntity.ok(charactersService.getWeapons(query, pageNumber, perPage, sortDirection));
+        WeaponsResponse weaponsResponse=charactersService.getWeapons(query, pageNumber, perPage, sortDirection);
+        EntityModel<WeaponsResponse> entityModel=EntityModel.of(weaponsResponse);
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getWeapons(query, pageNumber, perPage, sortDirection)).withSelfRel().withType("GET"));
+        if(pageNumber>1 && weaponsResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getWeapons(query, 1, perPage, sortDirection)).withRel("first").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getWeapons(query, pageNumber-1, perPage, sortDirection)).withRel("prev").withType("GET"));
+        }
+        if(pageNumber<weaponsResponse.maximumPage() && weaponsResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getWeapons(query, pageNumber+1, perPage, sortDirection)).withRel("next").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getWeapons(query, weaponsResponse.maximumPage(), perPage, sortDirection)).withRel("last").withType("GET"));
+        }
+        return ResponseEntity.ok(entityModel);
     }
 
     @GetMapping("/quotes")
-    public ResponseEntity<QuotesResponse> getQuotes(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<EntityModel<QuotesResponse>> getQuotes(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
-        return ResponseEntity.ok(charactersService.getQuotes(query, pageNumber, perPage, sortDirection));
+        QuotesResponse quotesResponse=charactersService.getQuotes(query, pageNumber, perPage, sortDirection);
+        EntityModel<QuotesResponse> entityModel=EntityModel.of(quotesResponse);
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getQuotes(query, pageNumber, perPage, sortDirection)).withSelfRel().withType("GET"));
+        if(pageNumber>1 && quotesResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getQuotes(query, 1, perPage, sortDirection)).withRel("first").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getQuotes(query, pageNumber-1, perPage, sortDirection)).withRel("prev").withType("GET"));
+        }
+        if(pageNumber<quotesResponse.maximumPage() && quotesResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getQuotes(query, pageNumber+1, perPage, sortDirection)).withRel("next").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getQuotes(query, quotesResponse.maximumPage(), perPage, sortDirection)).withRel("last").withType("GET"));
+        }
+        return ResponseEntity.ok(entityModel);
     }
 
     @GetMapping("/{id}")

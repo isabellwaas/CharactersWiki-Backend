@@ -33,15 +33,41 @@ public class OriginsController
     }
 
     @GetMapping("")
-    public ResponseEntity<OriginsResponse> getOrigins(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<EntityModel<OriginsResponse>> getOrigins(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
-        return ResponseEntity.ok(originsService.getOrigins(query, pageNumber, perPage, sortDirection));
+        OriginsResponse originsResponse=originsService.getOrigins(query, pageNumber, perPage, sortDirection);
+        EntityModel<OriginsResponse> entityModel=EntityModel.of(originsResponse);
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigins(query, pageNumber, perPage, sortDirection)).withSelfRel().withType("GET"));
+        if(pageNumber>1 && originsResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigins(query, 1, perPage, sortDirection)).withRel("first").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigins(query, pageNumber-1, perPage, sortDirection)).withRel("prev").withType("GET"));
+        }
+        if(pageNumber<originsResponse.maximumPage() && originsResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigins(query, pageNumber+1, perPage, sortDirection)).withRel("next").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigins(query, originsResponse.maximumPage(), perPage, sortDirection)).withRel("last").withType("GET"));
+        }
+        return ResponseEntity.ok(entityModel);
     }
 
     @GetMapping("/places")
-    public ResponseEntity<PlacesResponse> getPlaces(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<EntityModel<PlacesResponse>> getPlaces(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
     {
-        return ResponseEntity.ok(originsService.getPlaces(query, pageNumber, perPage, sortDirection));
+        PlacesResponse placesResponse=originsService.getPlaces(query, pageNumber, perPage, sortDirection);
+        EntityModel<PlacesResponse> entityModel=EntityModel.of(placesResponse);
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlaces(query, pageNumber, perPage, sortDirection)).withSelfRel().withType("GET"));
+        if(pageNumber>1 && placesResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlaces(query, 1, perPage, sortDirection)).withRel("first").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlaces(query, pageNumber-1, perPage, sortDirection)).withRel("prev").withType("GET"));
+        }
+        if(pageNumber<placesResponse.maximumPage() && placesResponse.maximumPage()>0)
+        {
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlaces(query, pageNumber+1, perPage, sortDirection)).withRel("next").withType("GET"));
+            entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlaces(query, placesResponse.maximumPage(), perPage, sortDirection)).withRel("last").withType("GET"));
+        }
+        return ResponseEntity.ok(entityModel);
     }
 
     @GetMapping("/{id}")
