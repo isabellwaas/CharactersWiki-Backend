@@ -48,7 +48,10 @@ public class OriginsController
     public ResponseEntity<EntityModel<OriginResponse>> getOrigin(@PathVariable int id) throws NotFoundException
     {
         EntityModel<OriginResponse> entityModel=EntityModel.of(originsService.getOriginById(id));
-        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigin(id)).withSelfRel());
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigin(id)).withSelfRel().withType("GET"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).updateOrigin(id, null)).withRel("update").withType("PATCH"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).deleteOrigin(id)).withRel("delete").withType("DELETE"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigins(Optional.empty(), 1, 10, Optional.empty())).withRel("all").withType("GET"));
         return ResponseEntity.ok(entityModel);
     }
 
@@ -56,7 +59,10 @@ public class OriginsController
     public ResponseEntity<EntityModel<PlaceResponse>> getPlace(@PathVariable int id) throws NotFoundException
     {
         EntityModel<PlaceResponse> entityModel=EntityModel.of(originsService.getPlaceById(id));
-        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlace(id)).withSelfRel());
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlace(id)).withSelfRel().withType("GET"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).updatePlace(id, null)).withRel("update").withType("PATCH"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).deletePlace(id)).withRel("delete").withType("DELETE"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlaces(Optional.empty(), 1, 10, Optional.empty())).withRel("all").withType("GET"));
         return ResponseEntity.ok(entityModel);
     }
 

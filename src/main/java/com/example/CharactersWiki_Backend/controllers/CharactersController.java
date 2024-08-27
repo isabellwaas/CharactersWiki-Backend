@@ -61,7 +61,10 @@ public class CharactersController
     public ResponseEntity<EntityModel<CharacterResponse>> getCharacter(@PathVariable int id) throws NotFoundException
     {
         EntityModel<CharacterResponse> entityModel=EntityModel.of(charactersService.getCharacterById(id));
-        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getCharacter(id)).withSelfRel());
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getCharacter(id)).withSelfRel().withType("GET"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).updateCharacter(id, null)).withRel("update").withType("PATCH"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).deleteCharacter(id)).withRel("delete").withType("DELETE"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getCharacters(Optional.empty(), 1, 10, Optional.empty())).withRel("all").withType("GET"));
         return ResponseEntity.ok(entityModel);
     }
 
@@ -69,7 +72,10 @@ public class CharactersController
     public ResponseEntity<EntityModel<AllegianceResponse>> getAllegiance(@PathVariable int id) throws NotFoundException
     {
         EntityModel<AllegianceResponse> entityModel=EntityModel.of(charactersService.getAllegianceById(id));
-        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getAllegiance(id)).withSelfRel());
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getAllegiance(id)).withSelfRel().withType("GET"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).updateAllegiance(id, null)).withRel("update").withType("PATCH"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).deleteAllegiance(id)).withRel("delete").withType("DELETE"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getAllegiances(Optional.empty(), 1, 10, Optional.empty())).withRel("all").withType("GET"));
         return ResponseEntity.ok(entityModel);
     }
 
@@ -77,7 +83,10 @@ public class CharactersController
     public ResponseEntity<EntityModel<WeaponResponse>> getWeapon(@PathVariable int id) throws NotFoundException
     {
         EntityModel<WeaponResponse> entityModel=EntityModel.of(charactersService.getWeaponById(id));
-        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getWeapon(id)).withSelfRel());
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getWeapon(id)).withSelfRel().withType("GET"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).updateWeapon(id, null)).withRel("update").withType("PATCH"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).deleteWeapon(id)).withRel("delete").withType("DELETE"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getWeapons(Optional.empty(), 1, 10, Optional.empty())).withRel("all").withType("GET"));
         return ResponseEntity.ok(entityModel);
     }
 
@@ -85,7 +94,10 @@ public class CharactersController
     public ResponseEntity<EntityModel<QuoteResponse>> getQuote(@PathVariable int id) throws NotFoundException
     {
         EntityModel<QuoteResponse> entityModel=EntityModel.of(charactersService.getQuoteById(id));
-        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getQuote(id)).withSelfRel());
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getQuote(id)).withSelfRel().withType("GET"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).updateQuote(id, null)).withRel("update").withType("PATCH"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).deleteQuote(id)).withRel("delete").withType("DELETE"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getQuotes(Optional.empty(), 1, 10, Optional.empty())).withRel("all").withType("GET"));
         return ResponseEntity.ok(entityModel);
     }
 
