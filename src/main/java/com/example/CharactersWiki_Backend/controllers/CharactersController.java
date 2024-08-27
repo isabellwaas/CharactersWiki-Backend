@@ -11,8 +11,9 @@ import com.example.CharactersWiki_Backend.utilities.SortDirection;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -57,27 +58,35 @@ public class CharactersController
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CharacterResponse> getCharacter(@PathVariable int id) throws NotFoundException
+    public ResponseEntity<EntityModel<CharacterResponse>> getCharacter(@PathVariable int id) throws NotFoundException
     {
-        return ResponseEntity.ok(charactersService.getCharacterById(id));
+        EntityModel<CharacterResponse> entityModel=EntityModel.of(charactersService.getCharacterById(id));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getCharacter(id)).withSelfRel());
+        return ResponseEntity.ok(entityModel);
     }
 
     @GetMapping("/allegiances/{id}")
-    public ResponseEntity<AllegianceResponse> getAllegiance(@PathVariable int id) throws NotFoundException
+    public ResponseEntity<EntityModel<AllegianceResponse>> getAllegiance(@PathVariable int id) throws NotFoundException
     {
-        return ResponseEntity.ok(charactersService.getAllegianceById(id));
+        EntityModel<AllegianceResponse> entityModel=EntityModel.of(charactersService.getAllegianceById(id));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getAllegiance(id)).withSelfRel());
+        return ResponseEntity.ok(entityModel);
     }
 
     @GetMapping("/weapons/{id}")
-    public ResponseEntity<WeaponResponse> getWeapon(@PathVariable int id) throws NotFoundException
+    public ResponseEntity<EntityModel<WeaponResponse>> getWeapon(@PathVariable int id) throws NotFoundException
     {
-        return ResponseEntity.ok(charactersService.getWeaponById(id));
+        EntityModel<WeaponResponse> entityModel=EntityModel.of(charactersService.getWeaponById(id));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getWeapon(id)).withSelfRel());
+        return ResponseEntity.ok(entityModel);
     }
 
     @GetMapping("/quotes/{id}")
-    public ResponseEntity<QuoteResponse> getQuote(@PathVariable int id) throws NotFoundException
+    public ResponseEntity<EntityModel<QuoteResponse>> getQuote(@PathVariable int id) throws NotFoundException
     {
-        return ResponseEntity.ok(charactersService.getQuoteById(id));
+        EntityModel<QuoteResponse> entityModel=EntityModel.of(charactersService.getQuoteById(id));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(CharactersController.class).getQuote(id)).withSelfRel());
+        return ResponseEntity.ok(entityModel);
     }
 
     @PostMapping("")

@@ -4,12 +4,15 @@ import com.example.CharactersWiki_Backend.models.dataTransferObjects.*;
 import com.example.CharactersWiki_Backend.models.projectionInterfaces.OriginResponse;
 import com.example.CharactersWiki_Backend.models.errors.NotFoundException;
 import com.example.CharactersWiki_Backend.models.projectionInterfaces.PlaceResponse;
+import com.example.CharactersWiki_Backend.models.projectionInterfaces.QuoteResponse;
 import com.example.CharactersWiki_Backend.services.IOriginsService;
 import com.example.CharactersWiki_Backend.utilities.SortDirection;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -42,15 +45,19 @@ public class OriginsController
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<OriginResponse> getOrigin(@PathVariable int id) throws NotFoundException
+    public ResponseEntity<EntityModel<OriginResponse>> getOrigin(@PathVariable int id) throws NotFoundException
     {
-        return ResponseEntity.ok(originsService.getOriginById(id));
+        EntityModel<OriginResponse> entityModel=EntityModel.of(originsService.getOriginById(id));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigin(id)).withSelfRel());
+        return ResponseEntity.ok(entityModel);
     }
 
     @GetMapping("/places/{id}")
-    public ResponseEntity<PlaceResponse> getPlace(@PathVariable int id) throws NotFoundException
+    public ResponseEntity<EntityModel<PlaceResponse>> getPlace(@PathVariable int id) throws NotFoundException
     {
-        return ResponseEntity.ok(originsService.getPlaceById(id));
+        EntityModel<PlaceResponse> entityModel=EntityModel.of(originsService.getPlaceById(id));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlace(id)).withSelfRel());
+        return ResponseEntity.ok(entityModel);
     }
 
     @PostMapping("")
