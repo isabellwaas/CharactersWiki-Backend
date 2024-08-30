@@ -10,6 +10,7 @@ import com.example.CharactersWiki_Backend.utilities.SortDirection;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
@@ -33,9 +34,9 @@ public class OriginsController
     }
 
     @GetMapping("")
-    public ResponseEntity<EntityModel<OriginsResponse>> getOrigins(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<EntityModel<OriginsResponse>> getOrigins(@RequestParam(required = false) @Size(min=1, max=30, message="query must have between {min} and {max} characters.") String query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam(required = false) SortDirection sortDirection)
     {
-        OriginsResponse originsResponse=originsService.getOrigins(query, pageNumber, perPage, sortDirection);
+        OriginsResponse originsResponse=originsService.getOrigins(query==null?Optional.empty():Optional.of(query), pageNumber, perPage, sortDirection==null?Optional.empty():Optional.of(sortDirection));
         EntityModel<OriginsResponse> entityModel=EntityModel.of(originsResponse);
         entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigins(query, pageNumber, perPage, sortDirection)).withSelfRel().withType("GET"));
         if(pageNumber>1 && originsResponse.maximumPage()>0)
@@ -52,9 +53,9 @@ public class OriginsController
     }
 
     @GetMapping("/places")
-    public ResponseEntity<EntityModel<PlacesResponse>> getPlaces(@RequestParam Optional<String> query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam Optional<SortDirection> sortDirection)
+    public ResponseEntity<EntityModel<PlacesResponse>> getPlaces(@RequestParam(required = false) @Size(min=1, max=30, message="query must have between {min} and {max} characters.") String query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam(required = false) SortDirection sortDirection)
     {
-        PlacesResponse placesResponse=originsService.getPlaces(query, pageNumber, perPage, sortDirection);
+        PlacesResponse placesResponse=originsService.getPlaces(query==null?Optional.empty():Optional.of(query), pageNumber, perPage, sortDirection==null?Optional.empty():Optional.of(sortDirection));
         EntityModel<PlacesResponse> entityModel=EntityModel.of(placesResponse);
         entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlaces(query, pageNumber, perPage, sortDirection)).withSelfRel().withType("GET"));
         if(pageNumber>1 && placesResponse.maximumPage()>0)
@@ -77,7 +78,7 @@ public class OriginsController
         entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigin(id)).withSelfRel().withType("GET"));
         entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).updateOrigin(id, null)).withRel("update").withType("PATCH"));
         entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).deleteOrigin(id)).withRel("delete").withType("DELETE"));
-        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigins(Optional.empty(), 1, 10, Optional.empty())).withRel("all").withType("GET"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getOrigins(null, 1, 10, null)).withRel("all").withType("GET"));
         return ResponseEntity.ok(entityModel);
     }
 
@@ -88,7 +89,7 @@ public class OriginsController
         entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlace(id)).withSelfRel().withType("GET"));
         entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).updatePlace(id, null)).withRel("update").withType("PATCH"));
         entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).deletePlace(id)).withRel("delete").withType("DELETE"));
-        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlaces(Optional.empty(), 1, 10, Optional.empty())).withRel("all").withType("GET"));
+        entityModel.add(WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(OriginsController.class).getPlaces(null, 1, 10, null)).withRel("all").withType("GET"));
         return ResponseEntity.ok(entityModel);
     }
 
