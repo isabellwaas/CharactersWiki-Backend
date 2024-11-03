@@ -3,7 +3,7 @@
 ![Spring Boot](https://img.shields.io/badge/Spring%20Boot-6DB33F?logo=springboot&logoColor=fff&style=flat)
 
 ## Introduction
-**CharactersWiki-Backend** is a RESTful web service that serves as a detailed characters wiki for authors and fans of books, films, series and games. It allows you to manage information about characters, including their relationships (such as family, allies, enemies, etc.), allegiances, quotes and weapons. Furthermore, you can catalogue the characters' origins and important locations. My motivation for the project lies especially in enhancing my development skills with Spring Boot and Java.
+**CharactersWiki-Backend** is a RESTful web service that serves as a detailed characters wiki for authors and fans of books, films, series and games. It allows you to manage information about characters, including their relationships (such as family, allies, enemies, etc.), allegiances, quotes and weapons. Furthermore, you can catalogue the characters' origins and important locations. My motivation for the project lies especially in enhancing my development skills with Spring Boot, Java and RESTful web services in general. 
 <br><br>
 
 ## Currently in development or still planned
