@@ -6,11 +6,13 @@ import com.example.CharactersWiki_Backend.models.dataTransferObjects.*;
 import com.example.CharactersWiki_Backend.models.errors.NotFoundException;
 import com.example.CharactersWiki_Backend.models.projectionInterfaces.*;
 import com.example.CharactersWiki_Backend.repositories.*;
+import com.example.CharactersWiki_Backend.utilities.Quality;
 import com.example.CharactersWiki_Backend.utilities.SortDirection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,14 +28,16 @@ public class CharactersService implements ICharactersService
     private final QuotesRepository quotesRepository;
 
     private final OriginsRepository originsRepository;
+    private final IImagesService imagesService;
 
-    public CharactersService(CharactersRepository charactersRepository, AllegiancesRepository allegiancesRepository, WeaponsRepository weaponsRepository, QuotesRepository quotesRepository, OriginsRepository originsRepository)
+    public CharactersService(CharactersRepository charactersRepository, AllegiancesRepository allegiancesRepository, WeaponsRepository weaponsRepository, QuotesRepository quotesRepository, OriginsRepository originsRepository, IImagesService imagesService)
     {
         this.charactersRepository = charactersRepository;
         this.allegiancesRepository = allegiancesRepository;
         this.weaponsRepository = weaponsRepository;
         this.quotesRepository = quotesRepository;
         this.originsRepository = originsRepository;
+        this.imagesService = imagesService;
     }
 
     public CharactersResponse getCharacters(Optional<String> query, int pageNumber, int perPage, Optional<SortDirection> sortDirection)
@@ -69,6 +73,13 @@ public class CharactersService implements ICharactersService
         return charactersRepository.findCharacterById(id).orElseThrow(() -> new NotFoundException("Character with id " + id + " not found."));
     }
 
+    public byte[] getImageOfCharacter(int id, Quality quality) throws Exception
+    {
+        Character character = charactersRepository.findById(id).orElseThrow(() -> new NotFoundException("Character with id " + id + " not found."));
+        if(character.getImage() == null) throw new NotFoundException("Character with id " + id + " has no image.");
+        return imagesService.get(character.getImage().getId(), quality).orElseThrow(() -> new NotFoundException("Image in quality "+ quality +" for character with id " + id + " not found."));
+    }
+
     public AllegianceResponse getAllegianceById(int id) throws NotFoundException
     {
         return allegiancesRepository.findAllegianceById(id).orElseThrow(() -> new NotFoundException("Allegiance with id " + id + " not found."));
@@ -100,6 +111,18 @@ public class CharactersService implements ICharactersService
         charactersRepository.flush();
 
         return new IdResponse(character.getId());
+    }
+
+    public IdResponse createImageForCharacter(int id, MultipartFile file) throws Exception
+    {
+        Character character = charactersRepository.findById(id).orElseThrow(() -> new NotFoundException("Character with id " + id + " not found."));
+
+        Image image = imagesService.save(file);
+        character.setImage(image);
+        charactersRepository.save(character);
+        charactersRepository.flush();
+
+        return new IdResponse(image.getId());
     }
 
     public IdResponse createAllegiance(CreateAllegiance createAllegiance) throws NotFoundException
@@ -271,6 +294,18 @@ public class CharactersService implements ICharactersService
         quotes.forEach(quote -> {
             if(quote.getCharacters().isEmpty()) quotesRepository.delete(quote);
         });
+    }
+
+    public void deleteImageOfCharacter(int id) throws Exception
+    {
+        Character character = charactersRepository.findById(id).orElseThrow(() -> new NotFoundException("Character with id " + id + " not found."));
+        if(character.getImage() == null) throw new NotFoundException("Character with id " + id + " has no image.");
+
+        int imageID = character.getImage().getId();
+        character.setImage(null);
+        charactersRepository.save(character);
+
+        imagesService.delete(imageID);
     }
 
     public void deleteAllegiance(int id) throws NotFoundException

@@ -11,3 +11,9 @@ services:
     ports:
       - "1234:3306/tcp"
     restart: always
+
+  clamav:
+    image: mkodockx/docker-clamav:alpine
+    ports:
+      - "3310:3310/tcp"
+    restart: always

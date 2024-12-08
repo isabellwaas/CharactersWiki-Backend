@@ -7,6 +7,7 @@ import com.example.CharactersWiki_Backend.models.errors.NotFoundException;
 import com.example.CharactersWiki_Backend.models.projectionInterfaces.QuoteResponse;
 import com.example.CharactersWiki_Backend.models.projectionInterfaces.WeaponResponse;
 import com.example.CharactersWiki_Backend.services.ICharactersService;
+import com.example.CharactersWiki_Backend.utilities.Quality;
 import com.example.CharactersWiki_Backend.utilities.SortDirection;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -15,9 +16,11 @@ import jakarta.validation.constraints.Size;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Optional;
 
@@ -120,6 +123,11 @@ public class CharactersController
         return ResponseEntity.ok(entityModel);
     }
 
+    @GetMapping("{id}/images")
+    public ResponseEntity<byte[]> getImageOfCharacter(@PathVariable int id, @RequestParam Quality quality) throws Exception
+    {
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(charactersService.getImageOfCharacter(id, quality));
+    }
     @GetMapping("/allegiances/{id}")
     public ResponseEntity<EntityModel<AllegianceResponse>> getAllegiance(@PathVariable int id) throws NotFoundException
     {
@@ -159,6 +167,11 @@ public class CharactersController
         return ResponseEntity.status(201).body(charactersService.createCharacter(createCharacter));
     }
 
+    @PostMapping("{id}/images")
+    public ResponseEntity<IdResponse> createImageForCharacter(@PathVariable int id, @RequestParam("image") MultipartFile image) throws Exception
+    {
+        return ResponseEntity.status(201).body(charactersService.createImageForCharacter(id, image));
+    }
     @PostMapping("/allegiances")
     public ResponseEntity<IdResponse> createAllegiance(@RequestBody @Valid CreateAllegiance createAllegiance) throws NotFoundException
     {
@@ -211,6 +224,12 @@ public class CharactersController
         return ResponseEntity.noContent().build();
     }
 
+    @DeleteMapping("/{id}/images")
+    public ResponseEntity<Void> deleteImageOfCharacter(@PathVariable int id) throws Exception
+    {
+        charactersService.deleteImageOfCharacter(id);
+        return ResponseEntity.noContent().build();
+    }
     @DeleteMapping("/allegiances/{id}")
     public ResponseEntity<Void> deleteAllegiance(@PathVariable int id) throws NotFoundException
     {

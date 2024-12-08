@@ -109,4 +109,8 @@ public class Character
     @Column(name="biography", nullable=true)
     @Size(max=500, message="biography must not be longer than {max} characters.")
     private String biography;
+
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name="image_id")
+    private Image image;
 }

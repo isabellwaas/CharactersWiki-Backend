@@ -50,9 +50,9 @@ public class ErrorHandler {
                 case MethodArgumentNotValidException methodArgumentNotValidException ->
                         new ErrorsResponse(methodArgumentNotValidException.getBindingResult().getFieldErrors().stream().map(DefaultMessageSourceResolvable::getDefaultMessage).toList());
                 case MethodArgumentTypeMismatchException methodArgumentTypeMismatchException ->
-                        new ErrorsResponse(List.of("Value for parameter \"${error.name}\" has wrong type."));
+                        new ErrorsResponse(List.of("Value for parameter "+ methodArgumentTypeMismatchException.getName() + " has wrong type."));
                 case MissingServletRequestParameterException missingServletRequestParameterException ->
-                        new ErrorsResponse(List.of("Value for parameter \"${error.parameterName}\" is missing."));
+                        new ErrorsResponse(List.of("Value for parameter "+ missingServletRequestParameterException.getParameterName() +" is missing."));
                 case HttpMessageNotReadableException httpMessageNotReadableException ->
                         new ErrorsResponse(List.of("Request body is missing or has wrong format."));
                 case IllegalArgumentException illegalArgumentException ->
