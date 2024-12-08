@@ -7,6 +7,9 @@ import com.example.CharactersWiki_Backend.models.projectionInterfaces.PlaceRespo
 import com.example.CharactersWiki_Backend.models.projectionInterfaces.QuoteResponse;
 import com.example.CharactersWiki_Backend.services.IOriginsService;
 import com.example.CharactersWiki_Backend.utilities.SortDirection;
+import com.example.CharactersWiki_Backend.utilities.documentation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -23,6 +26,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("v1/origins")
 @Validated
+@Tag(name = "Origins")
 public class OriginsController
 {
     private final IOriginsService originsService;
@@ -33,6 +37,8 @@ public class OriginsController
         this.originsService = originsService;
     }
 
+    @Operation(description = "Get all origins.")
+    @CommonApiResponses @OkApiResponse
     @GetMapping("")
     public ResponseEntity<EntityModel<OriginsResponse>> getOrigins(@RequestParam(required = false) @Size(min=1, max=30, message="query must have between {min} and {max} characters.") String query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam(required = false) SortDirection sortDirection)
     {
@@ -52,6 +58,8 @@ public class OriginsController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Get all places.")
+    @CommonApiResponses @OkApiResponse
     @GetMapping("/places")
     public ResponseEntity<EntityModel<PlacesResponse>> getPlaces(@RequestParam(required = false) @Size(min=1, max=30, message="query must have between {min} and {max} characters.") String query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam(required = false) SortDirection sortDirection)
     {
@@ -71,6 +79,8 @@ public class OriginsController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Get details of a specific origin.")
+    @CommonApiResponses @OkApiResponse @NotFoundApiResponse
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<OriginResponse>> getOrigin(@PathVariable int id) throws NotFoundException
     {
@@ -82,6 +92,8 @@ public class OriginsController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Get details of a specific place.")
+    @CommonApiResponses @OkApiResponse @NotFoundApiResponse
     @GetMapping("/places/{id}")
     public ResponseEntity<EntityModel<PlaceResponse>> getPlace(@PathVariable int id) throws NotFoundException
     {
@@ -93,18 +105,24 @@ public class OriginsController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Create a new origin.")
+    @CommonApiResponses @CreatedApiResponse
     @PostMapping("")
     public ResponseEntity<IdResponse> createOrigin(@RequestBody @Valid CreateOrigin createOrigin) throws NotFoundException
     {
         return ResponseEntity.status(201).body(originsService.createOrigin(createOrigin));
     }
 
+    @Operation(description = "Create a new place.")
+    @CommonApiResponses @CreatedApiResponse
     @PostMapping("/places")
     public ResponseEntity<IdResponse> createPlace(@RequestBody @Valid CreatePlace createPlace) throws NotFoundException
     {
         return ResponseEntity.status(201).body(originsService.createPlace(createPlace));
     }
 
+    @Operation(description = "Update a specific origin.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @PatchMapping("/{id}")
     public ResponseEntity<Void> updateOrigin(@PathVariable int id, @RequestBody @Valid UpdateOrigin updateOrigin) throws NotFoundException
     {
@@ -112,6 +130,8 @@ public class OriginsController
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(description = "Update a specific place.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @PatchMapping("/places/{id}")
     public ResponseEntity<Void> updatePlace(@PathVariable int id, @RequestBody @Valid UpdatePlace updatePlace) throws NotFoundException
     {
@@ -119,6 +139,8 @@ public class OriginsController
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(description = "Delete a specific origin.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteOrigin(@PathVariable int id) throws NotFoundException
     {
@@ -126,6 +148,8 @@ public class OriginsController
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(description = "Delete a specific place.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @DeleteMapping("/places/{id}")
     public ResponseEntity<Void> deletePlace(@PathVariable int id) throws NotFoundException
     {

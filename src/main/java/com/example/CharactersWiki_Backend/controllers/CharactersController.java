@@ -9,6 +9,11 @@ import com.example.CharactersWiki_Backend.models.projectionInterfaces.WeaponResp
 import com.example.CharactersWiki_Backend.services.ICharactersService;
 import com.example.CharactersWiki_Backend.utilities.Quality;
 import com.example.CharactersWiki_Backend.utilities.SortDirection;
+import com.example.CharactersWiki_Backend.utilities.documentation.*;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -27,6 +32,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("v1/characters")
 @Validated
+@Tag(name = "Characters")
 public class CharactersController
 {
     private final ICharactersService charactersService;
@@ -36,6 +42,9 @@ public class CharactersController
     {
         this.charactersService = charactersService;
     }
+
+    @Operation(description = "Get all characters.")
+    @CommonApiResponses @OkApiResponse
     @GetMapping("")
     public ResponseEntity<EntityModel<CharactersResponse>> getCharacters(@RequestParam(required = false) @Size(min=1, max=30, message="query must have between {min} and {max} characters.") String query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam(required = false) SortDirection sortDirection)
     {
@@ -55,6 +64,8 @@ public class CharactersController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Get all allegiances.")
+    @CommonApiResponses @OkApiResponse
     @GetMapping("/allegiances")
     public ResponseEntity<EntityModel<AllegiancesResponse>> getAllegiances(@RequestParam(required = false) @Size(min=1, max=30, message="query must have between {min} and {max} characters.") String query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam(required = false) SortDirection sortDirection)
     {
@@ -74,6 +85,8 @@ public class CharactersController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Get all weapons.")
+    @CommonApiResponses @OkApiResponse
     @GetMapping("/weapons")
     public ResponseEntity<EntityModel<WeaponsResponse>> getWeapons(@RequestParam(required = false) @Size(min=1, max=30, message="query must have between {min} and {max} characters.") String query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam(required = false) SortDirection sortDirection)
     {
@@ -93,6 +106,8 @@ public class CharactersController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Get all quotes.")
+    @CommonApiResponses @OkApiResponse
     @GetMapping("/quotes")
     public ResponseEntity<EntityModel<QuotesResponse>> getQuotes(@RequestParam(required = false) @Size(min=1, max=30, message="query must have between {min} and {max} characters.") String query, @RequestParam @Min(value=1, message="pageNumber must be at least 1.") int pageNumber, @RequestParam @Min(value=1, message="perPage must be at least 1.") @Max(value=50, message="perPage must be at most 50.") int perPage, @RequestParam(required = false) SortDirection sortDirection)
     {
@@ -112,6 +127,8 @@ public class CharactersController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Get details of a specific character.")
+    @CommonApiResponses @OkApiResponse @NotFoundApiResponse
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<CharacterResponse>> getCharacter(@PathVariable int id) throws NotFoundException
     {
@@ -123,11 +140,20 @@ public class CharactersController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Get the image of a specific character.")
+    @ApiResponse(
+            responseCode = "200",
+            content = @Content(mediaType = MediaType.IMAGE_JPEG_VALUE)
+    )
+    @CommonApiResponses @NotFoundApiResponse
     @GetMapping("{id}/images")
     public ResponseEntity<byte[]> getImageOfCharacter(@PathVariable int id, @RequestParam Quality quality) throws Exception
     {
         return ResponseEntity.ok().contentType(MediaType.IMAGE_JPEG).body(charactersService.getImageOfCharacter(id, quality));
     }
+
+    @Operation(description = "Get details of a specific allegiance.")
+    @CommonApiResponses @OkApiResponse @NotFoundApiResponse
     @GetMapping("/allegiances/{id}")
     public ResponseEntity<EntityModel<AllegianceResponse>> getAllegiance(@PathVariable int id) throws NotFoundException
     {
@@ -139,6 +165,8 @@ public class CharactersController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Get details of a specific weapon.")
+    @CommonApiResponses @OkApiResponse @NotFoundApiResponse
     @GetMapping("/weapons/{id}")
     public ResponseEntity<EntityModel<WeaponResponse>> getWeapon(@PathVariable int id) throws NotFoundException
     {
@@ -150,6 +178,8 @@ public class CharactersController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Get details of a specific quote.")
+    @CommonApiResponses @OkApiResponse @NotFoundApiResponse
     @GetMapping("/quotes/{id}")
     public ResponseEntity<EntityModel<QuoteResponse>> getQuote(@PathVariable int id) throws NotFoundException
     {
@@ -161,35 +191,48 @@ public class CharactersController
         return ResponseEntity.ok(entityModel);
     }
 
+    @Operation(description = "Create a new character.")
+    @CommonApiResponses @CreatedApiResponse
     @PostMapping("")
     public ResponseEntity<IdResponse> createCharacter(@RequestBody @Valid CreateCharacter createCharacter) throws NotFoundException
     {
         return ResponseEntity.status(201).body(charactersService.createCharacter(createCharacter));
     }
 
+    @Operation(description = "Create an image for a specific character.")
+    @CommonApiResponses @CreatedApiResponse @NotFoundApiResponse
     @PostMapping("{id}/images")
     public ResponseEntity<IdResponse> createImageForCharacter(@PathVariable int id, @RequestParam("image") MultipartFile image) throws Exception
     {
         return ResponseEntity.status(201).body(charactersService.createImageForCharacter(id, image));
     }
+
+    @Operation(description = "Create a new allegiance.")
+    @CommonApiResponses @CreatedApiResponse
     @PostMapping("/allegiances")
     public ResponseEntity<IdResponse> createAllegiance(@RequestBody @Valid CreateAllegiance createAllegiance) throws NotFoundException
     {
         return ResponseEntity.status(201).body(charactersService.createAllegiance(createAllegiance));
     }
 
+    @Operation(description = "Create a new weapon.")
+    @CommonApiResponses @CreatedApiResponse
     @PostMapping("/weapons")
     public ResponseEntity<IdResponse> createWeapon(@RequestBody @Valid CreateWeapon createWeapon) throws NotFoundException
     {
         return ResponseEntity.status(201).body(charactersService.createWeapon(createWeapon));
     }
 
+    @Operation(description = "Create a new quote.")
+    @CommonApiResponses @CreatedApiResponse
     @PostMapping("/quotes")
     public ResponseEntity<IdResponse> createQuote(@RequestBody @Valid CreateQuote createQuote) throws NotFoundException
     {
         return ResponseEntity.status(201).body(charactersService.createQuote(createQuote));
     }
 
+    @Operation(description = "Update a specific character.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @PatchMapping("/{id}")
     public ResponseEntity<Void> updateCharacter(@PathVariable int id, @RequestBody @Valid UpdateCharacter updateCharacter) throws NotFoundException
     {
@@ -197,6 +240,8 @@ public class CharactersController
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(description = "Update a specific allegiance.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @PatchMapping("/allegiances/{id}")
     public ResponseEntity<Void> updateAllegiance(@PathVariable int id, @RequestBody @Valid UpdateAllegiance updateAllegiance) throws NotFoundException
     {
@@ -204,6 +249,8 @@ public class CharactersController
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(description = "Update a specific weapon.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @PatchMapping("/weapons/{id}")
     public ResponseEntity<Void> updateWeapon(@PathVariable int id, @RequestBody @Valid UpdateWeapon updateWeapon) throws NotFoundException
     {
@@ -211,12 +258,16 @@ public class CharactersController
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(description = "Update a specific quote.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @PatchMapping("/quotes/{id}")
     public ResponseEntity<IdResponse> updateQuote(@PathVariable int id, @RequestBody @Valid UpdateQuote updateQuote) throws NotFoundException
     {
         return ResponseEntity.status(201).body(charactersService.updateQuote(id, updateQuote));
     }
 
+    @Operation(description = "Delete a specific character.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteCharacter(@PathVariable int id) throws NotFoundException
     {
@@ -224,12 +275,17 @@ public class CharactersController
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(description = "Delete the image of a specific character.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @DeleteMapping("/{id}/images")
     public ResponseEntity<Void> deleteImageOfCharacter(@PathVariable int id) throws Exception
     {
         charactersService.deleteImageOfCharacter(id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(description = "Delete a specific allegiance.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @DeleteMapping("/allegiances/{id}")
     public ResponseEntity<Void> deleteAllegiance(@PathVariable int id) throws NotFoundException
     {
@@ -237,6 +293,8 @@ public class CharactersController
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(description = "Delete a specific weapon.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @DeleteMapping("/weapons/{id}")
     public ResponseEntity<Void> deleteWeapon(@PathVariable int id) throws NotFoundException
     {
@@ -244,6 +302,8 @@ public class CharactersController
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(description = "Delete a specific quote.")
+    @CommonApiResponses @NoContentApiResponse @NotFoundApiResponse
     @DeleteMapping("/quotes/{id}")
     public ResponseEntity<Void> deleteQuote(@PathVariable int id) throws NotFoundException
     {
