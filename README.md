@@ -12,6 +12,8 @@
 - Origins and Locations: Specify the character's origins and key locations tied to their story.
 - Images: Upload character images, which are validated for correct file format and scanned for potential viruses to ensure safety and compatibility.
 
+The API specification can be found [here](https://isabellwaas.github.io/CharactersWiki-Backend/).
+<br>
 My motivation for the project lies especially in enhancing my development skills with Spring Boot, Java and RESTful web services in general while also providing a practical application that combines technical expertise with creativity. By implementing advanced features such as caching, hypermedia, file validation, projections and relationship mapping, this project has already allowed me to improve my skills and continues to do so.
 <br><br>
 
